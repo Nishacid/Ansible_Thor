@@ -1,0 +1,8 @@
+---
+
+- hosts: all
+  gather_facts: true
+  #strategy: free
+  #forks: 3
+  roles:
+    - scan

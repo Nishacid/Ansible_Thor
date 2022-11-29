@@ -1,0 +1,52 @@
+---
+
+# With Copy module
+- name : "Copy Thor to Host"
+  ansible.builtin.copy:
+    src: "./files/thor.zip"
+    dest: /tmp/
+
+# unzip need to bee install on host
+- name: "Thor unzip"
+  ansible.builtin.unarchive:
+    src: "/tmp/thor.zip"
+    remote_src: yes
+    dest: /tmp/
+
+- name: "Thor Launching"
+  shell: /tmp/thor/thor -a Filescan -p {{path}} -e /tmp/thor/ --htmlfile $(hostname -s)_thor_report.html
+  register: thor_log
+
+- debug: var=thor_log
+
+# With Script module
+# - name: "Thor Launching"
+#   ansible.builtin.script: "./files/thor"
+#   register: thor_log
+#
+# - debug: var=thor_log
+
+- name: "Get Hostname"
+  shell: hostname -s
+  register: hostname
+
+#- debug: var=hostname
+
+- name: "Get HTML Report name"
+  shell: ls /tmp/thor | grep "$(hostname -s)_thor_report.html"
+  register: report
+
+#- debug: var=report
+
+- name: "Save HTML Report"
+  ansible.builtin.fetch: 
+    src: "/tmp/thor/{{ report.stdout }}"
+    dest: ./report/thor_report_{{hostname.stdout}}.html
+    flat: yes
+
+- debug: 
+    msg : Scan report saved in ./report/thor_report_{{hostname.stdout}}.html
+
+- name: "Delete Thor on host"
+  shell: rm -f /tmp/{thor/,thor.zip}
+  register: delete_file
