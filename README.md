@@ -1,8 +1,8 @@
-# README
+# Thor with Ansible
 
 The purpose of this project is to automate a [Thor](https://www.nextron-systems.com/thor-lite/) scan and the retrieval of scan reports on several servers via Ansible.
 
-## Documentation
+## :book: Documentation
 
 Features:
 - Scan a specific **path** with Thor
